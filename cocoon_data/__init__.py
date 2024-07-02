@@ -4,6 +4,7 @@ import pandas as pd
 import json
 import re
 import uuid
+import openai
 import numpy as np
 import networkx as nx
 import matplotlib.patches as patches
@@ -8832,6 +8833,9 @@ def load_embedding(df, label_embedding='embedding', dim=1536):
     
     if not isinstance(df[label_embedding].iloc[0], list):
         df = parse_json_col(df, col=label_embedding)
+
+    if openai.api_key == "bedrock":
+        dim=1024
 
     embeddings_array = np.array(list(df[label_embedding]), dtype=np.float32)
     index = faiss.IndexFlatL2(dim)

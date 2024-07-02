@@ -3,6 +3,7 @@ import os
 import json
 import hashlib
 from collections import OrderedDict
+from apis.titan_bedrock import Client
 
 try:
     import vertexai
@@ -57,6 +58,11 @@ def call_embed(input_string):
         response = openai.Embedding.create(
             model="text-embedding-ada-002", input=input_string
         )
+        return response
+
+    elif openai.api_type == "bedrock":
+        titan_client_obj = Client()
+        response = titan_client_obj.create(input_string)
         return response
 
 
