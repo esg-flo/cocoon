@@ -1,221 +1,288 @@
 join_graph:
-- table_name: stg_OWNER
-  primary_key: OWNER_ID
-  foreign_keys:
-  - column: ACTIVE_USER_ID
-    reference:
-      table_name: stg_CONTACT
-      column: ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-- table_name: stg_COMPANY
-  foreign_keys:
-  - column: PROPERTY_HS_ALL_OWNER_IDS
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-  - column: PROPERTY_HS_UPDATED_BY_USER_ID
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-  - column: PROPERTY_HS_USER_IDS_OF_ALL_OWNERS
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-  - column: PROPERTY_HUBSPOT_OWNER_ID
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-- table_name: stg_CONTACT
-  foreign_keys:
-  - column: PROPERTY_HS_ALL_OWNER_IDS
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-  - column: PROPERTY_HS_CREATED_BY_USER_ID
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-  - column: PROPERTY_HS_OBJECT_SOURCE_USER_ID
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-  - column: PROPERTY_HS_UPDATED_BY_USER_ID
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-  - column: PROPERTY_HS_USER_IDS_OF_ALL_OWNERS
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-  - column: PROPERTY_HUBSPOT_OWNER_ID
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-  - column: PROPERTY_HS_ALL_CONTACT_VIDS
-    reference:
-      table_name: stg_CONTACT
-      column: ID
-  primary_key: ID
-- table_name: stg_DEAL
-  foreign_keys:
-  - column: OWNER_ID
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-  - column: DEAL_PIPELINE_ID
-    reference:
-      table_name: BusinessProcessPipelines
-      column: PIPELINE_ID
-  - column: DEAL_PIPELINE_STAGE_ID
-    reference:
-      table_name: stg_DEAL_PIPELINE_STAGE
-      column: STAGE_ID
-  primary_key: DEAL_ID
-- table_name: stg_DEAL_STAGE
-  foreign_keys:
-  - column: SOURCE_ID
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-  - column: DEAL_ID
-    reference:
-      table_name: stg_DEAL
-      column: DEAL_ID
-- table_name: stg_ENGAGEMENT_TASK
-  foreign_keys:
-  - column: PROPERTY_HS_ALL_OWNER_IDS
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-  - column: PROPERTY_HS_CREATED_BY
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-  - column: PROPERTY_HS_CREATED_BY_USER_ID
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-  - column: PROPERTY_HS_MODIFIED_BY
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-  - column: PROPERTY_HS_OBJECT_SOURCE_USER_ID
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-  - column: PROPERTY_HS_UPDATED_BY_USER_ID
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-  - column: PROPERTY_HS_USER_IDS_OF_ALL_OWNERS
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-  - column: PROPERTY_HUBSPOT_OWNER_ID
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-  - column: PROPERTY_HS_PIPELINE
-    reference:
-      table_name: BusinessProcessPipelines
-      column: PIPELINE_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-  - column: PROPERTY_HS_PIPELINE_STAGE
-    reference:
-      table_name: stg_DEAL_PIPELINE_STAGE
-      column: STAGE_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-  - column: ENGAGEMENT_ID
-    reference:
-      table_name: stg_ENGAGEMENT
-      column: ID
-- table_name: stg_USERS
-  foreign_keys:
-  - column: ID
-    reference:
-      table_name: stg_OWNER
-      column: OWNER_ID
-    referential_integrity:
-      '% orphan': 100.00%
-      explanation: ''
-- table_name: stg_ENGAGEMENT_CONTACT
-  foreign_keys:
-  - column: CONTACT_ID
-    reference:
-      table_name: stg_CONTACT
-      column: ID
-  - column: ENGAGEMENT_ID
-    reference:
-      table_name: stg_ENGAGEMENT
-      column: ID
-  - column: TYPE_ID
-    reference:
-      table_name: stg_ASSOCIATION_TYPE
-      column: ID
-- table_name: BusinessProcessPipelines
-  primary_key: PIPELINE_ID
+- table_name: stg_company_data
+  primary_key: company_id
   foreign_keys: []
-- table_name: stg_DEAL_PIPELINE_STAGE
+- table_name: stg_deal_company_data
   foreign_keys:
-  - column: PIPELINE_ID
+  - column: company_id
     reference:
-      table_name: BusinessProcessPipelines
-      column: PIPELINE_ID
-  primary_key: STAGE_ID
-- table_name: stg_TICKET_PIPELINE_STAGE
+      table_name: stg_company_data
+      column: company_id
+  - column: deal_id
+    reference:
+      table_name: stg_deal_data
+      column: deal_id
+- table_name: stg_engagement_company_data
   foreign_keys:
-  - column: PIPELINE_ID
+  - column: company_id
     reference:
-      table_name: BusinessProcessPipelines
-      column: PIPELINE_ID
-  - column: STAGE_ID
+      table_name: stg_company_data
+      column: company_id
+  - column: engagement_id
     reference:
-      table_name: stg_DEAL_PIPELINE_STAGE
-      column: STAGE_ID
-- table_name: stg_ENGAGEMENT
-  primary_key: ID
+      table_name: stg_engagement_data
+      column: engagement_id
+- table_name: stg_ticket_company_data
+  foreign_keys:
+  - column: company_id
+    reference:
+      table_name: stg_company_data
+      column: company_id
+  - column: ticket_id
+    reference:
+      table_name: stg_ticket_data
+      column: ticket_id
+- table_name: snapshot_company_property_history_data
+  foreign_keys:
+  - column: company_id
+    reference:
+      table_name: stg_company_data
+      column: company_id
+- table_name: stg_contact_data
+  primary_key: contact_id
   foreign_keys: []
-- table_name: stg_ASSOCIATION_TYPE
-  primary_key: ID
+- table_name: stg_contact_list_member_data
+  foreign_keys:
+  - column: contact_id
+    reference:
+      table_name: stg_contact_data
+      column: contact_id
+  - column: list_id
+    reference:
+      table_name: stg_contact_list_data
+      column: list_id
+- table_name: stg_deal_contact_data
+  foreign_keys:
+  - column: contact_id
+    reference:
+      table_name: stg_contact_data
+      column: contact_id
+  - column: deal_id
+    reference:
+      table_name: stg_deal_data
+      column: deal_id
+- table_name: stg_engagement_contact_data
+  foreign_keys:
+  - column: contact_id
+    reference:
+      table_name: stg_contact_data
+      column: contact_id
+  - column: engagement_id
+    reference:
+      table_name: stg_engagement_data
+      column: engagement_id
+- table_name: stg_ticket_contact_data
+  foreign_keys:
+  - column: contact_id
+    reference:
+      table_name: stg_contact_data
+      column: contact_id
+  - column: ticket_id
+    reference:
+      table_name: stg_ticket_data
+      column: ticket_id
+- table_name: stg_contact_list_data
+  primary_key: list_id
+  foreign_keys:
+  - column: portal_id
+    reference:
+      table_name: stg_portal_data
+      column: portal_id
+- table_name: stg_deal_data
+  primary_key: deal_id
+  foreign_keys:
+  - column: owner_id
+    reference:
+      table_name: stg_owner_data
+      column: owner_id
+- table_name: stg_engagement_deal_data
+  foreign_keys:
+  - column: deal_id
+    reference:
+      table_name: stg_deal_data
+      column: deal_id
+  - column: engagement_id
+    reference:
+      table_name: stg_engagement_data
+      column: engagement_id
+- table_name: stg_merged_deal_data
+  foreign_keys:
+  - column: deal_id
+    reference:
+      table_name: stg_deal_data
+      column: deal_id
+- table_name: stg_ticket_deal_data
+  foreign_keys:
+  - column: deal_id
+    reference:
+      table_name: stg_deal_data
+      column: deal_id
+  - column: ticket_id
+    reference:
+      table_name: stg_ticket_data
+      column: ticket_id
+- table_name: snapshot_deal_property_history_data
+  foreign_keys:
+  - column: deal_id
+    reference:
+      table_name: stg_deal_data
+      column: deal_id
+- table_name: stg_email_campaign_data
+  primary_key: campaign_id
   foreign_keys: []
-- table_name: stg_EMAIL_SUBSCRIPTION
-- table_name: stg_FORM
+- table_name: stg_email_event_data
+  foreign_keys:
+  - column: campaign_id
+    reference:
+      table_name: stg_email_campaign_data
+      column: campaign_id
+  - column: portal_id
+    reference:
+      table_name: stg_portal_data
+      column: portal_id
+  primary_key: event_id
+- table_name: stg_email_event_bounce_data
+  foreign_keys:
+  - column: event_id
+    reference:
+      table_name: stg_email_event_data
+      column: event_id
+- table_name: stg_email_event_click_data
+  foreign_keys:
+  - column: event_id
+    reference:
+      table_name: stg_email_event_data
+      column: event_id
+- table_name: stg_email_event_deferred_data
+  foreign_keys:
+  - column: event_id
+    reference:
+      table_name: stg_email_event_data
+      column: event_id
+- table_name: stg_email_event_delivered_data
+  foreign_keys:
+  - column: event_id
+    reference:
+      table_name: stg_email_event_data
+      column: event_id
+- table_name: stg_email_event_dropped_data
+  foreign_keys:
+  - column: event_id
+    reference:
+      table_name: stg_email_event_data
+      column: event_id
+- table_name: stg_email_event_forward_data
+  foreign_keys:
+  - column: event_id
+    reference:
+      table_name: stg_email_event_data
+      column: event_id
+- table_name: stg_email_event_open_data
+  foreign_keys:
+  - column: event_id
+    reference:
+      table_name: stg_email_event_data
+      column: event_id
+- table_name: stg_email_event_print_data
+  foreign_keys:
+  - column: event_id
+    reference:
+      table_name: stg_email_event_data
+      column: event_id
+- table_name: stg_email_event_sent_data
+  foreign_keys:
+  - column: event_id
+    reference:
+      table_name: stg_email_event_data
+      column: event_id
+- table_name: stg_email_event_spam_report_data
+  foreign_keys:
+  - column: event_id
+    reference:
+      table_name: stg_email_event_data
+      column: event_id
+- table_name: stg_email_event_status_change_data
+  foreign_keys:
+  - column: event_id
+    reference:
+      table_name: stg_email_event_data
+      column: event_id
+- table_name: stg_engagement_data
+  primary_key: engagement_id
+  foreign_keys:
+  - column: customer_portal_id
+    reference:
+      table_name: stg_portal_data
+      column: portal_id
+- table_name: stg_engagement_email_data
+  foreign_keys:
+  - column: engagement_id
+    reference:
+      table_name: stg_engagement_data
+      column: engagement_id
+- table_name: stg_engagement_call_data
+  foreign_keys:
+  - column: engagement_id
+    reference:
+      table_name: stg_engagement_data
+      column: engagement_id
+- table_name: stg_engagement_meeting_data
+  foreign_keys:
+  - column: engagement_id
+    reference:
+      table_name: stg_engagement_data
+      column: engagement_id
+- table_name: stg_engagement_note_data
+  foreign_keys:
+  - column: engagement_id
+    reference:
+      table_name: stg_engagement_data
+      column: engagement_id
+- table_name: stg_ticket_engagement_data
+  foreign_keys:
+  - column: engagement_id
+    reference:
+      table_name: stg_engagement_data
+      column: engagement_id
+  - column: ticket_id
+    reference:
+      table_name: stg_ticket_data
+      column: ticket_id
+- table_name: stg_owner_data
+  primary_key: owner_id
+  foreign_keys:
+  - column: portal_id
+    reference:
+      table_name: stg_portal_data
+      column: portal_id
+- table_name: stg_engagement_task_data
+  foreign_keys:
+  - column: owner_id
+    reference:
+      table_name: stg_owner_data
+      column: owner_id
+- table_name: stg_portal_data
+  primary_key: portal_id
+  foreign_keys: []
+- table_name: stg_ticket_data
+  primary_key: ticket_id
+  foreign_keys:
+  - column: pipeline_id
+    reference:
+      table_name: stg_ticket_pipeline_data
+      column: pipeline_id
+- table_name: stg_ticket_pipeline_data
+  primary_key: pipeline_id
+  foreign_keys: []
+- table_name: stg_ticket_pipeline_stage_data
+  foreign_keys:
+  - column: pipeline_id
+    reference:
+      table_name: stg_ticket_pipeline_data
+      column: pipeline_id
+- table_name: snapshot_deal_pipeline_data
+  foreign_keys:
+  - column: pipeline_id
+    reference:
+      table_name: stg_ticket_pipeline_data
+      column: pipeline_id
