@@ -3,7 +3,8 @@ import os
 import json
 import hashlib
 from collections import OrderedDict
-from apis.titan_bedrock import Client
+from cocoon.cocoon_data.apis.titan_bedrock import TitanClient
+from cocoon.cocoon_data.apis.bedrock import Client
 
 from .config import *
 
@@ -29,8 +30,7 @@ except:
     pass
 
 
-def call_embed(input_string):
-
+def call_embed(input_string, model_name):
     if openai.api_type == 'azure':
         response = openai.Embedding.create(input=input_string, 
             engine=openai.embed_engine)
@@ -44,7 +44,7 @@ def call_embed(input_string):
         return response
 
     elif openai.api_type == "bedrock":
-        titan_client_obj = Client()
+        titan_client_obj = TitanClient(model_name=model_name)
         response = titan_client_obj.create(input_string)
         return response
 
@@ -282,6 +282,9 @@ def call_llm_chat(messages, temperature=0.1, top_p=0.1, use_cache=True, api_type
                 messages=messages
             )
     
+    elif openai.api_type == "bedrock":
+
+        response = Client(aws_region=os.environ.get("AWS_REGION")).create(messages)
     else:
         raise ValueError(f"openai.api_type is {api_type}, but it should be 'azure' or 'openai'.")
 
