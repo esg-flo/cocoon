@@ -8755,11 +8755,14 @@ def replace_nan(df):
         df[col] = df[col].fillna("")
     return df
 
-def embed_string(string, engine=None):
-
+def embed_string(string, model_name, engine=None):
     try:
-        response = call_embed(string)
-        embeddings = response['data'][0]['embedding']
+        response = call_embed(string, model_name)
+
+        if openai.api_type == "bedrock":
+            embeddings = response
+        else:
+            embeddings = response['data'][0]['embedding']
         return embeddings
     except Exception as e:
         print(f"An error occurred while embedding: {e}")
@@ -8787,7 +8790,7 @@ def find_first_nan_index(df, column_name):
     else:
         return None
 
-def embed_labels(df, output_csv_address, chunk_size=1000, label='label'):
+def embed_labels(df, output_csv_address, model_name, chunk_size=1000, label='label'):
     df_output = initialize_output_csv(df, output_csv_address, label='label')
 
     start_index = find_first_nan_index(df_output, 'embedding')
@@ -8806,7 +8809,7 @@ def embed_labels(df, output_csv_address, chunk_size=1000, label='label'):
 
         for i, label_value in enumerate(labels_chunk):
             if pd.isna(df_output.at[chunk_start + i, 'embedding']):
-                embeddings = embed_string(label_value)
+                embeddings = embed_string(label_value, model_name)
                 if embeddings is not None:
                     df_output.at[chunk_start + i, 'embedding'] = embeddings
             pbar.update(1)
@@ -8829,12 +8832,11 @@ def parse_json_col(df, col='embedding'):
     return df
 
 
-def load_embedding(df, label_embedding='embedding', dim=1536):
-    
+def load_embedding(df, model_name, label_embedding='embedding', dim=1536):
     if not isinstance(df[label_embedding].iloc[0], list):
         df = parse_json_col(df, col=label_embedding)
 
-    if openai.api_key == "bedrock":
+    if openai.api_type == "bedrock" and model_name == "titan-v2":
         dim=1024
 
     embeddings_array = np.array(list(df[label_embedding]), dtype=np.float32)
