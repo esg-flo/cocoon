@@ -3,6 +3,8 @@ import os
 import json
 import hashlib
 from collections import OrderedDict
+from cocoon.cocoon_data.apis.titan_bedrock import TitanClient
+from cocoon.cocoon_data.apis.bedrock import Client
 
 try:
     import vertexai
@@ -45,8 +47,7 @@ if "OPENAI_EMBED_ENGINE" in os.environ:
     openai.embed_engine = os.environ["OPENAI_EMBED_ENGINE"]
 
 
-def call_embed(input_string):
-
+def call_embed(input_string, model_name):
     if openai.api_type == "azure":
         response = openai.Embedding.create(
             input=input_string, engine=openai.embed_engine
@@ -57,6 +58,11 @@ def call_embed(input_string):
         response = openai.Embedding.create(
             model="text-embedding-ada-002", input=input_string
         )
+        return response
+
+    elif openai.api_type == "bedrock":
+        titan_client_obj = TitanClient(model_name=model_name)
+        response = titan_client_obj.create(input_string)
         return response
 
 
@@ -183,7 +189,6 @@ def call_llm_chat(messages, temperature=0.1, top_p=0.1, use_cache=True):
         )
 
     elif openai.api_type == "bedrock":
-        from cocoon_data.apis.bedrock import Client
 
         response = Client(aws_region=os.environ.get("AWS_REGION")).create(messages)
 
