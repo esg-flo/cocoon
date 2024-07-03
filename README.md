@@ -4,6 +4,12 @@
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
+## Run Scope 3 Category 1 Notebook
+
+The notebook with the name `Scope3_Category1_notebook.ipynb` can be found in the `cocoon_data/notebooks` directory in the repo.
+
+Instructions to setup input variables, run the notebook, and locate the output file can be found in the notebook itself.
+
 ## Overview
 
 😎 **Cocoon** uses AI to automate data transformation.
@@ -12,19 +18,18 @@
 
 🖼️ Profile Gallery
 
-| Profile Title                              | Gallery Link |
-|--------------------------------------------|--------------|
-| AQI and Latitude/Longitude of Countries    | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_AQI_and_Lat_Long_of_Countries.html) |
-| 2020 Property Sales Data                   | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile__2020_property_sales_data.html) |
-| AAC Shelter Cat Outcome                    | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_aac_shelter_cat_outcome_eng.html) |
-| Books                                      | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_books.html) |
-| Cancer                                     | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_cancer.html) |
-| Divorces 2000-2015                         | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_divorces_2000_2015_original.html) |
-| German Credit Data                         | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_german_credit_data.html) |
-| K-Drama                                    | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_kdrama.html) |
-| Patients                                   | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_patients.html) |
-| Used Car Data                              | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_used_car_data_new.html) |
-
+| Profile Title                           | Gallery Link                                                                                                                        |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| AQI and Latitude/Longitude of Countries | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_AQI_and_Lat_Long_of_Countries.html) |
+| 2020 Property Sales Data                | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile__2020_property_sales_data.html)     |
+| AAC Shelter Cat Outcome                 | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_aac_shelter_cat_outcome_eng.html)   |
+| Books                                   | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_books.html)                         |
+| Cancer                                  | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_cancer.html)                        |
+| Divorces 2000-2015                      | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_divorces_2000_2015_original.html)   |
+| German Credit Data                      | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_german_credit_data.html)            |
+| K-Drama                                 | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_kdrama.html)                        |
+| Patients                                | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_patients.html)                      |
+| Used Car Data                           | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_used_car_data_new.html)             |
 
 <hr>
 
@@ -33,10 +38,3 @@ We plan to support Data Cleaning, Data Integration, and Data Modeling.
 👉 Check out the [3 min demo](https://www.youtube.com/watch?v=nddQ3jIdPCI)
 
 If interested, please fill in [waitlist](https://forms.gle/njhNd1NHfh3MvD8V9)
-
-
-
-
-
-
-
