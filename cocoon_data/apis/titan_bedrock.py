@@ -4,12 +4,8 @@ import os
 import boto3
 from botocore.exceptions import ClientError
 
-BEDROCK_MODEL_ID = os.environ.get(
-    "BEDROCK_MODEL_ID", "amazon.titan-embed-text-v1"
-)
-
 class TitanClient:
-    def __init__(self, model_name: str = None, aws_region: str = "us-east-1", normalize: bool = False) -> None:
+    def __init__(self, model_name: str = None, aws_region: str = "us-east-1", normalize: bool = False, output_vector_size: int = 1024) -> None:
         self.client = boto3.client(
             service_name="bedrock-runtime", region_name=aws_region
         )
@@ -18,7 +14,7 @@ class TitanClient:
             "titan-g1": "amazon.titan-embed-text-v1",
             "titan-v2": "amazon.titan-embed-text-v2:0"
         }
-        self.output_vector_size = 1024
+        self.output_vector_size = output_vector_size
         self.normalize = normalize
         
         if self.model_name not in self.model_ids:
