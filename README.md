@@ -4,12 +4,6 @@
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-## Run Scope 3 Category 1 Notebook
-
-The notebook with the name `Scope3_Category1_notebook.ipynb` can be found in the `cocoon_data/notebooks` directory in the repo.
-
-Instructions to setup input variables, run the notebook, and locate the output file can be found in the notebook itself.
-
 ## Overview
 
 😎 **Cocoon** uses AI to automate data transformation.
