@@ -3,6 +3,7 @@ import os
 import json
 import hashlib
 from collections import OrderedDict
+from apis.titan_bedrock import Client
 
 from .config import *
 
@@ -40,6 +41,11 @@ def call_embed(input_string):
             model="text-embedding-ada-002",
             input=input_string
         )
+        return response
+
+    elif openai.api_type == "bedrock":
+        titan_client_obj = Client()
+        response = titan_client_obj.create(input_string)
         return response
 
 def hash_messages(messages):
