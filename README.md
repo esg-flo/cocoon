@@ -1,34 +1,27 @@
-<div align="center">
-  <img src="./images/cocoon_logo.png" alt="Cocoon Logo" width="400"/>
-</div>
+# Cocoon
 
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+Scripts for running Scope 3 Categorical 1 calculations on NAICS database.
 
-## Overview
+## Install
 
-😎 **Cocoon** uses AI to automate data transformation.
+```sh
+cd workspace
+git clone git@github.com:esg-flo/cocoon.git
+make set-up
+make shell
+git checkout develop
+```
 
-😃 Cocoon Data Profiling will be publically available soon!
+## Tests
 
-🖼️ Profile Gallery
+To run tests use:
 
-| Profile Title                           | Gallery Link                                                                                                                        |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| AQI and Latitude/Longitude of Countries | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_AQI_and_Lat_Long_of_Countries.html) |
-| 2020 Property Sales Data                | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile__2020_property_sales_data.html)     |
-| AAC Shelter Cat Outcome                 | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_aac_shelter_cat_outcome_eng.html)   |
-| Books                                   | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_books.html)                         |
-| Cancer                                  | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_cancer.html)                        |
-| Divorces 2000-2015                      | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_divorces_2000_2015_original.html)   |
-| German Credit Data                      | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_german_credit_data.html)            |
-| K-Drama                                 | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_kdrama.html)                        |
-| Patients                                | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_patients.html)                      |
-| Used Car Data                           | [View Profile](https://cocoon-data-transformation.github.io/page/profile_gallery/Cocoon_Profile_used_car_data_new.html)             |
+```sh
+pipenv run pytest -s
+```
 
-<hr>
+OR
 
-We plan to support Data Cleaning, Data Integration, and Data Modeling.
-
-👉 Check out the [3 min demo](https://www.youtube.com/watch?v=nddQ3jIdPCI)
-
-If interested, please fill in [waitlist](https://forms.gle/njhNd1NHfh3MvD8V9)
+```sh
+make unit-test
+```
