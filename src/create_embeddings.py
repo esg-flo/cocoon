@@ -23,8 +23,6 @@ def _find_first_nan_index(df: pd.DataFrame, embed_col: str = "embedding"):
     nan_index = df[embed_col].isna().idxmax()
     value = df.loc[nan_index, embed_col]
 
-    if isinstance(value, list) and all(pd.isna(value)):
-        return nan_index
     if not isinstance(value, list) and pd.isna(value):
         return nan_index
     return None
