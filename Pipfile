@@ -8,10 +8,12 @@ numpy = "*"
 pandas = "*"
 boto3 = "*"
 faiss-cpu = "*"
+openpyxl = "*"
 
 [dev-packages]
 pytest = "*"
 pre-commit = "*"
+moto = "*"
 
 [requires]
 python_version = "3.10"
