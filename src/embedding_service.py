@@ -1,3 +1,5 @@
+import faiss
+import numpy as np
 import pandas as pd
 from core.embeddings.base import Embeddings
 from utils.logging import logger
@@ -64,3 +66,13 @@ def create_embeddings(
     logger.info("All labels embedded and CSV updated.")
 
     return embedding_df
+
+
+def initialize_faiss_index_from_embeddings(
+    embed_model: Embeddings, df: pd.DataFrame, embed_col="embedding"
+):
+    embeddings_array = np.array(df[embed_col].tolist(), dtype=np.float32)
+    index = faiss.IndexFlatL2(embed_model.dims)
+    index.add(embeddings_array)
+
+    return index
