@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional
 
 import boto3
 from core.embeddings.base import Embeddings
+from utils.logging import logger
 
 
 class BedrockEmbeddings(Embeddings):
@@ -57,7 +58,8 @@ class BedrockEmbeddings(Embeddings):
             raise ValueError(f"Invalid model id: {self.model_id}")
 
         body = json.dumps(input_body)
-        print(body)
+        logger.debug(f"Embedding input payload: {body}")
+
         try:
             response = self.client.invoke_model(
                 modelId=self.model_id,
