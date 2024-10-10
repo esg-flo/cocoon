@@ -6,7 +6,7 @@ from numpy.random import random
 from pandas.testing import assert_frame_equal
 
 from src.core.embeddings.bedrock import BedrockEmbeddings
-from src.create_embeddings import create_embeddings
+from src.embedding_service import create_embeddings
 
 
 class TestBedrockEmbeddings(unittest.TestCase):
