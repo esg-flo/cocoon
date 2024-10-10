@@ -1,6 +1,5 @@
 import pandas as pd
 from core.embeddings.base import Embeddings
-from core.embeddings.bedrock import BedrockEmbeddings
 from utils.logging import logger
 
 
@@ -48,8 +47,7 @@ def create_embeddings(
         logger.info(
             f"{start_index} rows already embedded. Resume embedding from {start_index + 1}..."
         )
-
-    if start_index is None:
+    elif start_index is None:
         logger.info("All labels already embedded.")
         return embedding_df
 
