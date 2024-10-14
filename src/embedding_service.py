@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from core.embeddings.base import Embeddings
 from utils.logging import logger
+from utils.utils import parse_json_col
 
 
 def _initialize_embedding_df(
@@ -16,6 +17,18 @@ def _initialize_embedding_df(
         embedding_df = (
             group_df[df.columns].apply(lambda x: x.index.tolist()).reset_index(name="index_ids")
         )
+
+        dependent_columns = []
+
+        for column in df.columns:
+            if column != "label":
+                if group_df[column].nunique().eq(1).all():
+                    dependent_columns.append(column)
+
+        if dependent_columns:
+            attributes_data = group_df[dependent_columns].first().reset_index()
+            embedding_df = pd.merge(embedding_df, attributes_data, on="label", how="left")
+
         embedding_df[embed_col] = None
     return embedding_df
 
@@ -71,6 +84,9 @@ def create_embeddings(
 def initialize_faiss_index_from_embeddings(
     embed_model: Embeddings, df: pd.DataFrame, embed_col="embedding"
 ):
+    if not isinstance(df[embed_col].iloc[0], list):
+        df = parse_json_col(df, col=embed_col)
+
     embeddings_array = np.array(df[embed_col].tolist(), dtype=np.float32)
     index = faiss.IndexFlatL2(embed_model.dims)
     index.add(embeddings_array)
