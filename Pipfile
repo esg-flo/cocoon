@@ -9,6 +9,8 @@ pandas = "*"
 boto3 = "*"
 faiss-cpu = "*"
 openpyxl = "*"
+fsspec = "*"
+s3fs = "*"
 
 [dev-packages]
 pytest = "*"
