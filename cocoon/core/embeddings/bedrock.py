@@ -8,8 +8,9 @@ import json
 from typing import Any, Dict, List, Optional
 
 import boto3
-from core.embeddings.base import Embeddings
-from utils.logging import logger
+
+from ...utils.logging import logger
+from .base import Embeddings
 
 
 class BedrockEmbeddings(Embeddings):
