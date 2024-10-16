@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from numpy.random import random
 
-from src.core.embeddings.bedrock import BedrockEmbeddings
+from cocoon.core.embeddings.bedrock import BedrockEmbeddings
 
 
 class TestBedrockEmbeddings(unittest.TestCase):
@@ -67,7 +67,7 @@ class TestBedrockEmbeddings(unittest.TestCase):
 
         embeddings = random(size=(2, dims))
         with patch(
-            "src.core.embeddings.bedrock.BedrockEmbeddings._embedding_func"
+            "cocoon.core.embeddings.bedrock.BedrockEmbeddings._embedding_func"
         ) as mock_embedding_func:
             mock_embedding_func.return_value = random(size=dims)
 
@@ -91,7 +91,7 @@ class TestBedrockEmbeddings(unittest.TestCase):
 
         embeddings = random(size=dims)
         with patch(
-            "src.core.embeddings.bedrock.BedrockEmbeddings._embedding_func"
+            "cocoon.core.embeddings.bedrock.BedrockEmbeddings._embedding_func"
         ) as mock_embedding_func:
             mock_embedding_func.return_value = random(size=dims)
             bedrock_embeddings = BedrockEmbeddings(

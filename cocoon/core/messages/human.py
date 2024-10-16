@@ -1,4 +1,4 @@
-from core.messages.base import BaseMessage
+from .base import BaseMessage
 
 
 class HumanMessage(BaseMessage):
