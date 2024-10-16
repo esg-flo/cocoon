@@ -3,8 +3,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import boto3
 
-from cocoon.utils.logging import logger
-
+from ...utils.logging import logger
 from ..messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, _message_type_lookups
 from .base import LLM
 
