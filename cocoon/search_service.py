@@ -3,11 +3,12 @@ from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
-from core.llm import LLM
-from core.prompts import entity_relation_matches_prompt, relation_statisfy_description_prompt
-from core.search.faiss_search import FaissEmbeddingSearchManager
-from utils.logging import logger
-from utils.utils import extract_json_code_safe, parse_json_col
+
+from .core.llm.base import LLM
+from .core.prompts import entity_relation_matches_prompt, relation_statisfy_description_prompt
+from .core.search.faiss_search import FaissEmbeddingSearchManager
+from .utils.logging import logger
+from .utils.utils import extract_json_code_safe, parse_json_col
 
 
 def find_similar_indices(df, index, embed_col: str = "embedding", top_k: int = 10):
@@ -78,6 +79,8 @@ def find_entity_relation_matches_and_cluster(
         columns_to_use.remove("index_ids")
         columns_to_use.remove("embedding")
 
+    curr_size = faiss_embed_search_obj.get_size()
+    logger.info(f"Begin processing entity match for {curr_size} rows")
     while not faiss_embed_search_obj.is_index_empty():
         idx = faiss_embed_search_obj.get_valid_id()
         faiss_embed_search_obj.remove_rows(idx)
@@ -126,3 +129,10 @@ def find_entity_relation_matches_and_cluster(
                 input_df.at[index, match_col] = json_var3
 
         input_df.at[idx, match_col] = json_var
+
+        new_size = faiss_embed_search_obj.get_size()
+        if (curr_size - new_size) > 10:
+            logger.info(f"{new_size} rows remain...")
+            curr_size = new_size
+
+    logger.info("Completed processing entity match")

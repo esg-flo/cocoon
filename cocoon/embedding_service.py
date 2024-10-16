@@ -1,9 +1,10 @@
 import faiss
 import numpy as np
 import pandas as pd
-from core.embeddings.base import Embeddings
-from utils.logging import logger
-from utils.utils import parse_json_col
+
+from .core.embeddings.base import Embeddings
+from .utils.logging import logger
+from .utils.utils import parse_json_col
 
 
 def _initialize_embedding_df(

@@ -5,8 +5,8 @@ import pandas as pd
 from numpy.random import random
 from pandas.testing import assert_frame_equal
 
-from src.core.embeddings.bedrock import BedrockEmbeddings
-from src.embedding_service import create_embeddings, initialize_faiss_index_from_embeddings
+from cocoon.core.embeddings.bedrock import BedrockEmbeddings
+from cocoon.embedding_service import create_embeddings, initialize_faiss_index_from_embeddings
 
 
 class TestBedrockEmbeddings(unittest.TestCase):
@@ -44,7 +44,9 @@ class TestBedrockEmbeddings(unittest.TestCase):
         output_csv_filepath = "test.csv"
 
         bedrock_embeddings = BedrockEmbeddings(model_id, aws_region_name, client)
-        with patch("src.core.embeddings.bedrock.BedrockEmbeddings.embed_query") as mock_embed_query:
+        with patch(
+            "cocoon.core.embeddings.bedrock.BedrockEmbeddings.embed_query"
+        ) as mock_embed_query:
             with patch("pandas.DataFrame.to_csv") as mock_to_csv:
                 mock_embed_query.return_value = [1, 2, 3]
                 output = create_embeddings(bedrock_embeddings, df, output_csv_filepath)
@@ -87,7 +89,9 @@ class TestBedrockEmbeddings(unittest.TestCase):
         output_csv_filepath = "test.csv"
 
         bedrock_embeddings = BedrockEmbeddings(model_id, aws_region_name, client)
-        with patch("src.core.embeddings.bedrock.BedrockEmbeddings.embed_query") as mock_embed_query:
+        with patch(
+            "cocoon.core.embeddings.bedrock.BedrockEmbeddings.embed_query"
+        ) as mock_embed_query:
             with patch("pandas.DataFrame.to_csv") as mock_to_csv:
                 with patch("pandas.read_csv") as mock_read_csv:
                     mock_read_csv.return_value = df
