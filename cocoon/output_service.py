@@ -66,17 +66,18 @@ def _generate_cluster_record(
 
 def generate_output(
     df: pd.DataFrame,
-    clusters: Dict[int, list],
     exclude_columns: List[str] = ["label", "index_ids", "embedding", "matches"],
     match_col: str = "matches",
 ):
     results = list()
 
-    for key, value in clusters.items():
+    for idx, value in enumerate(df["matches"]):
+        similar_to = value.get("Similar_to") or []
+
         record = _generate_cluster_record(
             df=df,
-            cluster_key=key,
-            cluster_value=value,
+            cluster_key=idx,
+            cluster_value=similar_to,
             exclude_columns=exclude_columns,
             match_col=match_col,
         )
