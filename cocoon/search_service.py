@@ -104,6 +104,7 @@ def find_entity_relation_matches_and_cluster(
         if verbose:
             logger.info(f"👉 Match: {json.dumps(json_var, indent=4)}")
 
+        all_indicies = []
         related_rows = faiss_embed_search_obj.search_by_row_index(idx, k=30)
 
         if len(related_rows) > 0:
@@ -120,7 +121,12 @@ def find_entity_relation_matches_and_cluster(
             for index in indicies:
                 ids.append(list(related_rows.index)[index])
 
-            json_var["Similar_to"] = ids
+            all_indicies += ids
+            faiss_embed_search_obj.remove_rows(ids)
+
+            json_var3 = {"similar_to": idx}
+            for i, index in enumerate(all_indicies):
+                input_df.at[index, match_col] = json_var3
 
         input_df.at[idx, match_col] = json_var
 
