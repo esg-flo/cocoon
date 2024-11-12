@@ -13,7 +13,12 @@ def _df_row_to_dict(df: pd.DataFrame, idx: int, exclude_columns: List[str] = Non
     if idx not in df_reduced.index:
         raise IndexError(f"Index {idx} is out of bounds for the DataFrame.")
 
-    return df_reduced.iloc[idx].to_dict()
+    record = df_reduced.iloc[idx].to_dict()
+    for key, value in record.items():
+        if not isinstance(value, str):
+            record[key] = None
+
+    return record
 
 
 def _generate_cluster_record(
