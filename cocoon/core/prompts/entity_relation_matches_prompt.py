@@ -19,9 +19,8 @@ E.g., "small vehicle" and "car" are general category of "small car"
 else it is irrelavent entity then NOT_RELATED
 E.g., "cloth" is a irrelavent
 
-Provide your answer as json:
-```json
-{{
+Provide your answer as RFC8259 compliant JSON response following the output format without deviation:
+```\n{{
     "Input Entity Guess": "...",
     "EXACT_MATCH": {{
         "reason": "The input entity is ... which matches ...",
@@ -45,4 +44,4 @@ Provide your answer as json:
     }},
     "Summary of Relations": "The input entity is ... (desrcibe its properties) It doesn't make assumptions about ... It is different from ..."
 }}
-```"""
+``` """
