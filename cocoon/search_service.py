@@ -24,9 +24,14 @@ def _entity_relation_match_one(input_desc: str, refernece_desc: str, llm: LLM):
     prompt = entity_relation_matches_prompt.prompt.format(input_desc, refernece_desc)
 
     response, raw_output, metadata = llm.invoke(prompt)
-
-    json_code = extract_json_code_safe(response)
-    json_var = json.loads(json_code)
+    try:
+        json_code = extract_json_code_safe(response)
+        json_var = json.loads(json_code)
+    except Exception:
+        logger.error(
+            f"Error while mathcing entity relation for Input: {input_desc} and Reference: {refernece_desc}"
+        )
+        return {}
     return json_var
 
 
@@ -35,8 +40,14 @@ def _find_relation_satisfy_description(entity_desc: str, related_rows_desc_str: 
 
     response, raw_output, metadata = llm.invoke(prompt)
 
-    json_code = extract_json_code_safe(response)
-    json_var = json.loads(json_code)
+    try:
+        json_code = extract_json_code_safe(response)
+        json_var = json.loads(json_code)
+    except Exception:
+        logger.error(
+            f"Error while finding relation satisfaction description for Input: {entity_desc} and Reference: {related_rows_desc_str}"
+        )
+        return {}
     return json_var
 
 
@@ -58,6 +69,7 @@ def find_entity_relation_matches_and_cluster(
     label: str = "label",
     match_col: str = "matches",
     verbose: bool = False,
+    output_file_path: str = None,
     **kwargs: Optional[Dict],
 ):
     _search_kwargs = {}
@@ -81,6 +93,7 @@ def find_entity_relation_matches_and_cluster(
 
     curr_size = faiss_embed_search_obj.get_size()
     logger.info(f"Begin processing entity match for {curr_size} rows")
+    index = 0
     while not faiss_embed_search_obj.is_index_empty():
         idx = faiss_embed_search_obj.get_valid_id()
         faiss_embed_search_obj.remove_rows(idx)
@@ -106,15 +119,15 @@ def find_entity_relation_matches_and_cluster(
 
         related_rows = faiss_embed_search_obj.search_by_row_index(idx, k=30)
 
-        if len(related_rows) > 0:
-            entity_desc = json_var["Summary of Relations"]
+        if json_var and len(related_rows) > 0:
+            entity_desc = json_var.get("Summary of Relations", "")
             reference_desc = related_rows[columns_to_use].reset_index(drop=True).to_csv(quoting=1)
 
             json_var2 = _find_relation_satisfy_description(
                 entity_desc=entity_desc, related_rows_desc_str=reference_desc, llm=llm
             )
 
-            indicies = json_var2["indices"]
+            indicies = json_var2.get("indices", [])
 
             ids = []
             for index in indicies:
@@ -123,10 +136,16 @@ def find_entity_relation_matches_and_cluster(
             json_var["Similar_to"] = ids
 
         input_df.at[idx, match_col] = json_var
+        index += 1
 
         new_size = faiss_embed_search_obj.get_size()
-        if (curr_size - new_size) > 10:
+        if (index + 1) % 10 == 0:
             logger.info(f"{new_size} rows remain...")
             curr_size = new_size
 
+        if output_file_path and (index + 1) % 20 == 0:
+            logger.info(f"Saving partial results after processing {index + 1} rows...")
+            input_df.to_csv(output_file_path, index=False)
+
+    input_df.to_csv(output_file_path, index=False)
     logger.info("Completed processing entity match")
