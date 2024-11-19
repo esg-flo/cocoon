@@ -66,7 +66,7 @@ def find_entity_relation_matches_and_cluster(
     refernece_df: pd.DataFrame,
     llm: LLM,
     columns_to_use: List[str] = None,
-    label: str = "label",
+    label: str = "2017 NAICS Title",
     match_col: str = "matches",
     verbose: bool = False,
     output_file_path: str = None,
