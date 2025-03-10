@@ -29,12 +29,13 @@ def _generate_cluster_record(
     match_col: str,
 ):
     output = {
-        "input_data": {"entity": None, "ai_input_description": None},
-        "exact_match": {"entity": None, "reason": None},
+        "input_data": {"entity": list(), "ai_input_description": ""},
+        "exact_match": {"entity": list(), "reason": ""},
         "related": {
-            "conflicted_assumption": {"entity": None, "reason": None},
-            "additional_assumption": {"entity": None, "reason": None},
+            "conflicted_assumption": {"entity": list(), "reason": ""},
+            "additional_assumption": {"entity": list(), "reason": ""},
         },
+        "general": {"entity": list(), "reason": ""},
         "similar_to": list(),
     }
 
