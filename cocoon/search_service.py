@@ -130,8 +130,15 @@ def find_entity_relation_matches_and_cluster(
             indicies = json_var2.get("indices", [])
 
             ids = []
+            related_rows_index = list(related_rows.index)
+
             for index in indicies:
-                ids.append(list(related_rows.index)[index])
+                if index < len(related_rows_index):
+                    ids.append(related_rows_index[index])
+                else:
+                    logger.info(
+                        f"⚠️ Index {index} is out of bounds for related_rows_index with length {len(related_rows_index)}. Related rows index: {related_rows_index}"
+                    )
 
             json_var["Similar_to"] = ids
 
