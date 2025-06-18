@@ -11,6 +11,7 @@ faiss-cpu = "*"
 openpyxl = "*"
 fsspec = "*"
 s3fs = "*"
+aiohttp = "==3.10.11"
 
 [dev-packages]
 pytest = "*"
