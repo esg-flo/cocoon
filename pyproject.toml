@@ -9,7 +9,17 @@ authors = [
     {name = "Zachary Huang", email = "zh2408@columbia.edu"},
 ]
 description = "Cocoon is an open-source project that aims to free analysts from tedious data transformations with LLM."
-dependencies = ['boto3', 'faiss-cpu', 'fsspec', 'numpy', 'openpyxl', 'pandas', 's3fs']
+dependencies = [
+    'boto3', 
+    'faiss-cpu', 
+    'fsspec', 
+    'numpy', 
+    'openpyxl', 
+    'pandas', 
+    's3fs',
+    'pydantic',
+    'pyarrow'
+]
 
 [tool.setuptools]
 packages = ["cocoon"]

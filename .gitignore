@@ -55,3 +55,6 @@ coverage.xml
 cached_messages.json
 *.index
 data_log.txt
+
+**/.env
+*/output/*
