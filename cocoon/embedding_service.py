@@ -5,6 +5,7 @@ import pandas as pd
 from .core.embeddings.base import Embeddings
 from .utils.logging import logger
 from .utils.utils import parse_json_col
+from .core.vectorization.processors import TextProcessor
 
 
 def _initialize_embedding_df(
@@ -51,6 +52,8 @@ def create_embeddings(
     target_col: str = "label",
     embed_col: str = "embedding",
 ):
+    text_processor = TextProcessor()
+
     if target_col not in df.columns:
         raise ValueError(f"Column with name '{target_col}' should be present in the dataframe.")
 
@@ -72,6 +75,7 @@ def create_embeddings(
         labels_chunk = embedding_df.loc[chunk_start:chunk_end, target_col].tolist()
 
         for idx, label in enumerate(labels_chunk):
+            label = text_processor.clean_text(text=label)
             embeddings = embed_model.embed_query(label)
             embedding_df.at[chunk_start + idx, embed_col] = embeddings
 
