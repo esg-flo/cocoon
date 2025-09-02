@@ -218,12 +218,24 @@ class ProductInterpretationService:
             for idx in batch_indices:
                 try:
                     row = result_df.loc[idx]
+                    
+                    # Helper function to safely get value from pandas Series
+                    def safe_get_value(row, column, default="-"):
+                        """Safely get value from pandas row, returning default if NaN or missing."""
+                        return str(row[column]) if pd.notna(row[column]) else default
+                    
+                    # Helper function to safely get description values
+                    def safe_description(row, col_index, description_cols, default="-"):
+                        if 0 <= col_index < len(description_cols):
+                            return safe_get_value(row, description_cols[col_index], default)
+                        return default
+                    
                     # Prepare product data
                     product_data = {
-                        "productGrouping": str(row[product_grouping_col]) if pd.notna(row[product_grouping_col]) else "-",
-                        "description1": str(row[description_cols[0]]) if len(description_cols) > 0 and pd.notna(row[description_cols[0]]) else "-",
-                        "description2": str(row[description_cols[1]]) if len(description_cols) > 1 and pd.notna(row[description_cols[1]]) else "-",
-                        "description3": str(row[description_cols[2]]) if len(description_cols) > 2 and pd.notna(row[description_cols[2]]) else "-"
+                        "productGrouping": safe_get_value(row, product_grouping_col),
+                        "description1": safe_description(row, 0, description_cols),
+                        "description2": safe_description(row, 1, description_cols),
+                        "description3": safe_description(row, 2, description_cols)
                     }
                     
                     # Interpret product
