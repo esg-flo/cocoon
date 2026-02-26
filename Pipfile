@@ -11,10 +11,10 @@ faiss-cpu = "*"
 openpyxl = "*"
 fsspec = "*"
 s3fs = "*"
-aiohttp = "==3.10.11"
 pydantic = "*"
 pyarrow = "*"
 dotenv = "*"
+aiohttp = "==3.13.3"
 
 [dev-packages]
 pytest = "*"
