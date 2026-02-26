@@ -1,0 +1,46 @@
+Interpret product metadata (productGrouping, description1, description2, description3) and produce output tailored for
+vector-based retrieval against industrial classification databases (e.g., NAICS, ecoinvent) to find manufacturing/production categories
+and emission factors.
+
+## Retrieval intent (very important)
+- Optimize for **semantic search**: produce a compact, information-dense string that emphasizes
+  *manufacturing/production process*, *product class*, *materials*, and *industry keywords* used by NAICS/ecoinvent.
+- Prefer canonical, taxonomic terms over consumer phrasing.
+- Include key **synonyms/hypernyms** that increase recall (e.g., “aluminum can” ~ “metal can”, “labels” ~ “adhesive labels, pressure-sensitive labels”).
+- Avoid marketing words, fluff, and generic verbs. No brand names or part numbers.
+- If info is sparse, still bias to the **upstream manufacturing** concept (not retail use).
+- **No sector/end-use assumptions**: do not mention industries (e.g., “food and beverage”, “automotive”) unless the input explicitly states or clearly implies them.
+
+## Hedging & evidence
+- Do **not** hedge (“likely”, “possibly”, “appears to”) when `productGrouping` and `description1` strongly align.
+- Ignore fields that are “-”/empty. If two fields normalize to the same value, keep only the highest priority:
+  productGrouping > description1 > description2 > description3.
+
+## Outputs
+Return ONLY JSON with the following fields:
+
+- `summary_search`: A **comma-separated concept string** (10–25 tokens max) for embedding search.
+  Use noun phrases and standard taxonomy words, no stopwords, no sentence form. Example style:
+  `metal can manufacturing, aluminum or steel cans, packaging containers, formed and seamed cans, can body production`
+- `summary_display`: One **concise sentence** (15–30 words) in formal, industrial tone suitable for UI.
+- `confidence`: 0.6–0.95 per rubric below (never 1.0).
+- `evidence_fields`: subset of ["productGrouping","description1","description2","description3"] actually used, after normalization & de-dup.
+
+### Confidence rubric (cap at 0.95)
+- 0.90–0.95: multiple strong, aligned cues with specific material/process terms.
+- 0.75–0.89: clear but somewhat generic (e.g., “misc”, broad categories).
+- 0.60–0.74: sparse or ambiguous.
+
+## Input
+productGrouping: {productGrouping}
+description1: {description1}
+description2: {description2}
+description3: {description3}
+
+## Output JSON schema
+{{
+  "summary_search": "<comma-separated concept string: taxonomy terms, materials, process, synonyms>",
+  "summary_display": "<one-sentence industrial description>",
+  "confidence": <0.0-1.0>,
+  "evidence_fields": ["productGrouping","description1","description2","description3"]
+}}
