@@ -1,0 +1,162 @@
+name: PR Version Tag Check
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - release
+      - main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-version-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get PR commits
+        id: get-commits
+        run: |
+          # Get all commits in this PR
+          PR_COMMITS=$(git log --pretty=format:"%s" origin/${{ github.base_ref }}..HEAD)
+
+          echo "PR Commits:"
+          echo "$PR_COMMITS"
+          echo ""
+
+          # Save for next step
+          echo "$PR_COMMITS" > pr_commits.txt
+
+      - name: Check for version tags
+        id: check-tags
+        run: |
+          # Read commit messages
+          COMMIT_MESSAGES=$(cat pr_commits.txt)
+
+          # Make script executable and run Python version calculator
+          chmod +x .github/scripts/version_calculator.py
+
+          # Use the version calculator to check for tags
+          # We don't care about the version, just whether tags exist
+          OUTPUT=$(.github/scripts/version_calculator.py "v0.0.0" "$COMMIT_MESSAGES")
+
+          echo "$OUTPUT"
+
+          # Parse output
+          INCREMENT_TYPE=$(echo "$OUTPUT" | grep "increment_type=" | cut -d= -f2)
+          NEEDS_NOTE=$(echo "$OUTPUT" | grep "needs_note=" | cut -d= -f2)
+
+          echo "increment_type=$INCREMENT_TYPE" >> $GITHUB_OUTPUT
+          echo "needs_note=$NEEDS_NOTE" >> $GITHUB_OUTPUT
+
+      - name: Post warning comment if no tag found
+        if: steps.check-tags.outputs.needs_note == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const message = `## ⚠️ No Version Tag Found
+
+            This PR does not contain any version increment tags in the commit messages.
+
+            When this PR is merged, the release will default to a **PATCH** version bump.
+
+            ### Available Tags:
+            - \`[MAJOR]\` - Breaking changes, incompatible API changes
+            - \`[MINOR]\` - New features, backwards compatible
+            - \`[PATCH]\` or \`[FIX]\` - Bug fixes, backwards compatible
+
+            ### If this is intentional:
+            No action needed - the PR can still be merged and will receive a patch version bump.
+
+            ### To add a version tag:
+            Add one of the tags above to any commit message in this PR.`;
+
+            // Check if we already posted a comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('No Version Tag Found')
+            );
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: message
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: message
+              });
+            }
+
+      - name: Post success comment if tag found
+        if: steps.check-tags.outputs.needs_note == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const incrementType = '${{ steps.check-tags.outputs.increment_type }}';
+            const message = `## ✅ Version Tag Detected
+
+            This PR contains a **[${incrementType}]** version tag.
+
+            When merged, this will trigger a **${incrementType}** version bump.`;
+
+            // Check if we already posted a comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              (comment.body.includes('Version Tag Detected') || comment.body.includes('No Version Tag Found'))
+            );
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: message
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: message
+              });
+            }
+
+      - name: Set check status (always succeeds)
+        run: |
+          if [ "${{ steps.check-tags.outputs.needs_note }}" == "true" ]; then
+            echo "::warning::No version tag found in PR commits. Will default to PATCH on merge."
+          else
+            echo "::notice::Found [${{ steps.check-tags.outputs.increment_type }}] version tag in PR commits."
+          fi
+
+          # Always exit 0 so the check passes
+          exit 0

@@ -1,0 +1,148 @@
+name: Create Release from Commits
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REPOSITORY_NAME: cocoon
+  AWS_REGION: eu-central-1
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get commits since last release
+        id: get-commits
+        run: |
+          # Get the latest tag sorted by version, or use the first commit if none exists
+          LATEST_TAG=$(git tag --sort=-version:refname | head -n1 || git rev-list --max-parents=0 HEAD)
+
+          echo "Last release: $LATEST_TAG"
+          echo ""
+
+          # Get all commits since the last tag (or first commit)
+          # This includes commits from merged branches
+          COMMITS=$(git log --pretty=format:"- %s (%h)" ${LATEST_TAG}..HEAD)
+
+          # Get all commit messages for parsing (includes merged commits)
+          ALL_COMMIT_MESSAGES=$(git log --pretty=format:"%s" ${LATEST_TAG}..HEAD)
+
+          # Count the number of commits
+          COMMIT_COUNT=$(git log --oneline ${LATEST_TAG}..HEAD | wc -l)
+
+          echo "Found $COMMIT_COUNT commits since $LATEST_TAG"
+
+          # Exit early if no new commits
+          if [ "$COMMIT_COUNT" -eq 0 ]; then
+            echo "No new commits since last release. Skipping release creation."
+            echo "skip_release=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo ""
+          echo "Commits:"
+          echo "$COMMITS"
+
+          # Save for next step
+          echo "$ALL_COMMIT_MESSAGES" > commit_messages.txt
+          echo "$COMMITS" > formatted_commits.txt
+          echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
+          echo "skip_release=false" >> $GITHUB_OUTPUT
+
+      - name: Calculate version
+        if: steps.get-commits.outputs.skip_release != 'true'
+        id: version
+        run: |
+          # Get the latest tag sorted by version, or use v0.0.0 if none exists
+          LATEST_TAG=$(git tag --sort=-version:refname | head -n1)
+          if [ -z "$LATEST_TAG" ]; then
+            LATEST_TAG="v0.0.0"
+          fi
+          echo "Previous version: $LATEST_TAG"
+
+          # Read commit messages
+          COMMIT_MESSAGES=$(cat commit_messages.txt)
+
+          # Make script executable and run Python version calculator
+          chmod +x .github/scripts/version_calculator.py
+          OUTPUT=$(.github/scripts/version_calculator.py "$LATEST_TAG" "$COMMIT_MESSAGES")
+
+          # Parse output
+          INCREMENT_TYPE=$(echo "$OUTPUT" | grep "increment_type=" | cut -d= -f2)
+          NEW_VERSION=$(echo "$OUTPUT" | grep "new_version=" | cut -d= -f2)
+          NEEDS_NOTE=$(echo "$OUTPUT" | grep "needs_note=" | cut -d= -f2)
+
+          echo "New version: $NEW_VERSION"
+          echo "Increment type: $INCREMENT_TYPE"
+
+          # Output for next steps
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "needs_note=$NEEDS_NOTE" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        if: steps.get-commits.outputs.skip_release != 'true'
+        run: |
+          # Start release notes
+          cat > release_notes.md << 'EOF'
+          ## Changes in this release
+
+          EOF
+
+          # Add note if no version tag was found
+          if [ "${{ steps.version.outputs.needs_note }}" = "true" ]; then
+            echo "**Note:** No incremental designation was assigned, defaulting to [FIX]" >> release_notes.md
+            echo "" >> release_notes.md
+          fi
+
+          # Add formatted commits
+          cat formatted_commits.txt >> release_notes.md
+
+      - name: Create GitHub Release
+        if: steps.get-commits.outputs.skip_release != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ steps.version.outputs.version }} \
+            --title "Release ${{ steps.version.outputs.version }}" \
+            --notes-file release_notes.md
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::285552316116:role/github_role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Publish to DynamoDB
+        if: steps.get-commits.outputs.skip_release != 'true'
+        run: |
+          # Generate UUID4 for the primary key
+          RELEASE_ID=$(uuidgen)
+
+          # Get current timestamp in ISO 8601 format
+          RELEASE_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          # Read release notes and escape for JSON
+          RELEASE_NOTES=$(cat release_notes.md | jq -Rs .)
+
+          # Create the DynamoDB item
+          aws dynamodb put-item \
+            --table-name release_notes \
+            --item "{
+              \"id\": {\"S\": \"$RELEASE_ID\"},
+              \"repository\": {\"S\": \"${{ env.REPOSITORY_NAME }}\"},
+              \"release_title\": {\"S\": \"Release ${{ steps.version.outputs.version }}\"},
+              \"release_notes\": {\"S\": $RELEASE_NOTES},
+              \"release_timestamp\": {\"S\": \"$RELEASE_TIMESTAMP\"},
+              \"recorded\": {\"BOOL\": false}
+            }"
